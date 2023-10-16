@@ -1,5 +1,6 @@
 package com.for_comprehension.function.l0_function;
 
+import java.util.Optional;
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -8,6 +9,8 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.function.UnaryOperator;
+
+import static java.util.function.Predicate.not;
 
 class L0_Function {
 
@@ -47,5 +50,11 @@ class L0_Function {
         BinaryOperator<Integer> f9 = (i1, i2) -> i1 + i2; // BiFunction<Integer, Integer, Integer>
 
         Function<String, Integer> f10 = f1.andThen(i -> i + 1);
+
+        Optional.of(4).filter(not(L0_Function::isEven));
+    }
+
+    private static boolean isEven(int i) {
+        return i % 2 == 0;
     }
 }
