@@ -2,6 +2,7 @@ package com.for_comprehension.function.E01;
 
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.util.Objects;
 import java.util.concurrent.Callable;
 import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
@@ -15,10 +16,20 @@ final class FunctionalInterfaces {
     public static void main(String[] args) {
         Function<String, String> f1 = s -> s.toUpperCase();
         BiFunction<Integer, Integer, Integer> f2 = (o, o2) -> o + o2;
-        // TODO:
         TriFunction<Integer, Integer, Integer, Integer> f3 = (i1, i2, i3) -> i1 + i2 + i3;
-        // bonus: andThen()
+        TriFunction<Integer, Integer, Integer, String> f4 = f3.andThen(i -> String.valueOf(i));
+    }
+
+    @FunctionalInterface
+    public interface TriFunction<T1, T2, T3, R> {
+        R apply(T1 t1, T2 t2, T3 t3);
+
+        default <RR> TriFunction<T1, T2, T3, RR> andThen(Function<R, RR> after) {
+            Objects.requireNonNull(after);
+            return (t1, t2, t3) -> after.apply(apply(t1, t2, t3));
         }
+    }
+
 
     /**
      * @return a constant supplier returning 42
