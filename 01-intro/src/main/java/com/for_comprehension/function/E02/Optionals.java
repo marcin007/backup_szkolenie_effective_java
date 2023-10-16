@@ -7,7 +7,10 @@ import java.util.NoSuchElementException;
 import java.util.Optional;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.function.Predicate;
 import java.util.function.Supplier;
+
+import static java.util.function.Predicate.not;
 
 class Optionals {
 
@@ -22,7 +25,7 @@ class Optionals {
      * WARNING: this is an anti-pattern (unless you know what you're doing)
      */
     static Function<Integer, Person> L1_bruteForceGet() {
-        return todo();
+        return id -> findOneById(id).orElseThrow();
     }
 
     /**
@@ -31,24 +34,25 @@ class Optionals {
      *
      */
     static Function<Integer, Person> L2_customException() {
-        return todo();
-
+        return id -> findOneById(id).orElseThrow(IllegalStateException::new);
     }
 
     /**
      * Get {@link Person#name} if found or else return {@link this#DEFAULT}
      */
     static Function<Integer, String> L3_defaultValue() {
-        return todo();
-
+        return id -> findOneById(id)
+          .map(Person::getName)
+          .orElse(DEFAULT);
     }
 
     /**
      * Get {@link Person#name} if found or else return the value returned by provided method (represented by Supplier<String)
      */
     static BiFunction<Integer, Supplier<String>, String> L4_defaultValueMethodResult() {
-        return todo();
-
+        return (id, function) -> findOneById(id)
+          .map(Person::getName)
+          .orElseGet(function);
     }
 
     /**
@@ -58,7 +62,11 @@ class Optionals {
      * Hint: {@link Optional#filter}
      */
     static Function<Integer, String> L5_processValue() {
-        return todo();
+        return id -> findOneById(id)
+          .map(Person::getName)
+          .filter(not(String::isEmpty))
+          .map(String::toUpperCase)
+          .orElse(DEFAULT);
     }
 
     /**
@@ -69,7 +77,10 @@ class Optionals {
      * Hint: {@link Optional#flatMap(Function)}
      */
     static Function<Integer, Integer> L6_nestedOptionals() {
-        return todo();
+        return id -> findOneById(id)
+          .map(Person::getName)
+          .flatMap(name -> findAgeByName(name))
+          .orElse(42);
     }
 
     static class Person {

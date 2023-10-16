@@ -64,7 +64,7 @@ public class OptionalsTest {
     private static void sleep() {
         try {
             log.info("calculating...");
-            Thread.sleep(100000);
+            Thread.sleep(100_000);
         } catch (InterruptedException e) {
             // ignore shamefully
         }
