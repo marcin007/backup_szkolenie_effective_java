@@ -2,47 +2,32 @@ package com.for_comprehension.function.E02;
 
 import java.time.LocalDate;
 import java.time.Month;
+import java.util.Optional;
 
 class OptionalsRefactor {
 
-    private Person findPerson(int id) {
-        switch(id) {
-            case 1:
-                return new Person("James",48, 193, LocalDate.of(2000, Month.NOVEMBER, 1));
-            case 2:
-                return new Person("John", 62, 169, LocalDate.of(1989, Month.OCTOBER, 21));
-            case 0:
-                return null;
-            default:
-                return null;
-        }
+    private Optional<Person> findPerson(int id) {
+        return Optional.of(id)
+          .map(i -> switch (id) {
+              case 1 -> new Person("James", 48, 193, LocalDate.of(2000, Month.NOVEMBER, 1));
+              case 2 -> new Person("John", 62, 169, LocalDate.of(1989, Month.OCTOBER, 21));
+              default -> null;
+          });
     }
 
-    private String findAddress(Person person) {
-        if (person.getBirthDate().isAfter(LocalDate.of(2000, Month.JANUARY, 1))) {
-            return "";
-        }
-        if (person.getBirthDate().isAfter(LocalDate.of(1980, Month.JANUARY, 1))) {
-            return " Some St.   ";
-        }
-        return null;
+    private Optional<String> findAddress(Person person) {
+        return Optional.ofNullable(person)
+          .filter(p -> p.getBirthDate().isAfter(LocalDate.of(1980, Month.JANUARY, 1)))
+          .map(i -> " Some St.   ");
     }
 
-    private String findAddressById(int id) {
-        final Person personOrNull = findPerson(id);
-        if (personOrNull != null) {
-            if (personOrNull.getHeight() > 168) {
-                final String addressOrNull = findAddress(personOrNull);
-                if (addressOrNull != null && !addressOrNull.isEmpty()) {
-                    return addressOrNull.trim();
-                } else {
-                    return null;
-                }
-            }
-        }
-        return null;
+    private Optional<String> findAddressById(int id) {
+        return findPerson(id)
+          .filter(p -> p.getHeight() > 168)
+          .flatMap(p -> findAddress(p))
+          .filter(a -> !a.isBlank())
+          .map(String::trim);
     }
-
 
     // ***
     // DON"T CHANGE ANYTHING BEYOND THIS POINT
