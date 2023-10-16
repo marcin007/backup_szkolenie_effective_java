@@ -1,13 +1,12 @@
 package com.for_comprehension.function;
 
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 
 class User {
 
     public static void main(String[] args) {
-        List.of("a", "b").subList(0, 1).stream().sorted().map(i -> i + "a")
+//        List.of("a", "b").subList(0, 1).stream().sorted().map(i -> i + "a");
 
         User user = new User(new ArrayList<>(List.of("box")));
         List<String> items1 = user.getItems();
