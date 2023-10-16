@@ -3,6 +3,7 @@ package com.for_comprehension.function.E01;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.concurrent.Callable;
+import java.util.function.BiFunction;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.IntPredicate;
@@ -10,8 +11,14 @@ import java.util.function.Predicate;
 import java.util.function.Supplier;
 
 final class FunctionalInterfaces {
-    private FunctionalInterfaces() {
-    }
+
+    public static void main(String[] args) {
+        Function<String, String> f1 = s -> s.toUpperCase();
+        BiFunction<Integer, Integer, Integer> f2 = (o, o2) -> o + o2;
+        // TODO:
+        TriFunction<Integer, Integer, Integer, Integer> f3 = (i1, i2, i3) -> i1 + i2 + i3;
+        // bonus: andThen()
+        }
 
     /**
      * @return a constant supplier returning 42
