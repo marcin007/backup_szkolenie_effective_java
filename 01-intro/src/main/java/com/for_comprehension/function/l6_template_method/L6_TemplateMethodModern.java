@@ -1,14 +1,32 @@
 package com.for_comprehension.function.l6_template_method;
 
+import java.time.Duration;
 import java.time.Instant;
+import java.util.function.Supplier;
 
 class L6_TemplateMethodModern {
 
+    // JMH - do benchmarków
     public static void main(String[] args) {
-//        runWithLogging(() -> process(42));
-
         String result = timed(() -> process("foo"));
-        // zalogować: execution time: xxx ms
+
+//        timedNanos(() -> 42);
+    }
+
+    static <T> T timed(Supplier<T> supplier) {
+        var before = Instant.now();
+        T result = supplier.get();
+        var after = Instant.now();
+        System.out.println(STR."Execution time: \{Duration.between(before, after).toMillis()} ms");
+        return result;
+    }
+
+    static <T> T timedNanos(Supplier<T> supplier) {
+        long before = System.nanoTime();
+        T result = supplier.get();
+        long after = System.nanoTime();
+        System.out.println(STR."Execution time: \{after - before} ns");
+        return result;
     }
 
     static void runWithLogging(Runnable runnable) {
