@@ -1,6 +1,7 @@
 package com.for_comprehension.function.l3_stream;
 
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Stream;
 
 import static java.util.Comparator.comparing;
@@ -11,6 +12,7 @@ class L3_Operators {
           .map(String::toUpperCase)
           .toList();
 
+        // [[1], [2,3], []] -> [1,2,3]
         List<String> r2 = getUsers()
           .flatMap(u -> getUserItems(u).stream())
           .toList();
@@ -50,6 +52,14 @@ class L3_Operators {
 
         List<String> r11 = getUsers()
           .peek(System.out::println)
+          .toList();
+
+        List<String> r12 = getUsers()
+          .mapMulti((String s, Consumer<String> consumer) -> {
+              for (String userItem : getUserItems(s)) {
+                  consumer.accept(userItem);
+              }
+          })
           .toList();
     }
 
