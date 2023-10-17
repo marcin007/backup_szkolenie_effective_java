@@ -1,19 +1,30 @@
 package com.for_comprehension.function.l3_stream;
 
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Set;
-import java.util.stream.Collectors;
+import java.util.Optional;
 import java.util.stream.Stream;
+
+import static java.util.Comparator.comparing;
 
 class L3_StreamTerminalMethods {
     public static void main(String[] args) {
-        List<String> r1 = getUsers().collect(Collectors.toList());
-        Set<String> r2 = getUsers().collect(Collectors.toSet());
-        ArrayList<String> r3 = getUsers().collect(Collectors.toCollection(() -> new ArrayList<>()));
-        List<String> r4 = getUsers().collect(Collectors.toUnmodifiableList());
+        Optional<String> r1 = getUsers().findAny();
+        Optional<String> r2 = getUsers().findFirst();
+        Optional<String> r3 = getUsers().max(comparing(String::length));
+        Optional<String> r4 = getUsers().min(comparing(String::length));
+        Optional<String> r5 = getUsers().reduce((s1, s2) -> s1 + s2);
+        String r6 = getUsers().reduce("", (s1, s2) -> s1 + s2);
 
+        boolean r7 = getUsers().allMatch(s -> !s.isEmpty());
+        boolean r8 = getUsers().noneMatch(s -> s.isEmpty());
+        boolean r9 = getUsers().anyMatch(s -> s.isEmpty());
 
+        System.out.println(Stream.of().allMatch(i -> true));
+        System.out.println(Stream.of().noneMatch(i -> true));
+        System.out.println(Stream.of().anyMatch(i -> true));
+
+        long r10 = getUsers().count();
+        String[] r11 = getUsers().toArray(String[]::new);
     }
 
     static List<String> getUserItems(String username) {
