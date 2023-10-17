@@ -5,7 +5,6 @@ import com.pholser.junit.quickcheck.Property;
 import com.pholser.junit.quickcheck.generator.InRange;
 import com.pholser.junit.quickcheck.runner.JUnitQuickcheck;
 import org.apache.commons.lang3.RandomStringUtils;
-import org.assertj.core.api.Assertions;
 import org.junit.runner.RunWith;
 
 import java.net.URI;
@@ -20,6 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 @RunWith(JUnitQuickcheck.class)
 public class FunctionalInterfacesTest {
+
+    //TODO
+//    @Property
+    public void uppercaseStringShouldHaveSameLength(String input) {
+        System.out.println(input);
+        assertThat(input.length()).isEqualTo(input.toUpperCase().length());
+    }
 
     @Property
     public void l1_toConstant() {
@@ -61,7 +67,6 @@ public class FunctionalInterfacesTest {
 
         assertThat(function.apply(input).test(input)).isEqualTo(false);
         assertThat(function.apply(input).test(input + 1)).isEqualTo(true);
-
     }
 
     @Property
@@ -90,6 +95,6 @@ public class FunctionalInterfacesTest {
         Function<Integer, Integer> f1 = i -> i + 2;
         Function<Integer, Integer> f2 = i -> i * 2;
         Integer result = combiner.apply(f1, f2).apply(input);
-        Assertions.assertThat(result).isEqualTo((input + 2) * 2);
+        assertThat(result).isEqualTo((input + 2) * 2);
     }
 }
