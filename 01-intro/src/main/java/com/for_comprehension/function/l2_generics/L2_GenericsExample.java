@@ -30,4 +30,5 @@ class L2_GenericsExample {
     public static <T extends Number> T process(T input) {
         return input;
     }
+
 }
