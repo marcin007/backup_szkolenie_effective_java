@@ -6,8 +6,11 @@ import java.util.stream.Stream;
 class CustomJoiningCollector {
 
     public static void main(String[] args) {
-        Stream.of(1, 2, 3)
-          .collect(joiningToString());
+        System.out.println(Stream.of(1, 2, 3).collect(joiningToString())); // 123
+        System.out.println(Stream.of(1, 2, 3).collect(joiningToString(","))); // 1,2,3
+        System.out.println(Stream.of(1, 2, 3).collect(joiningToString(",", "[", "]"))); // [1,2,3]
+        System.out.println(Stream.of().collect(joiningToString(",", "[", "]"))); // []
+        System.out.println(Stream.of(1).collect(joiningToString(",", "[", "]"))); // [1]
     }
 
     // TODO
