@@ -20,13 +20,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 @RunWith(JUnitQuickcheck.class)
 public class FunctionalInterfacesTest {
 
-    //TODO
-//    @Property
-    public void uppercaseStringShouldHaveSameLength(String input) {
-        System.out.println(input);
-        assertThat(input.length()).isEqualTo(input.toUpperCase().length());
-    }
-
     @Property
     public void l1_toConstant() {
         assertThat(FunctionalInterfaces.L1_toConstant().get()).isEqualTo(42);
