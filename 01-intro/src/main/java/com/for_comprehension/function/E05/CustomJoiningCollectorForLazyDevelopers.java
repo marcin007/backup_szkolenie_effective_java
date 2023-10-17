@@ -1,14 +1,18 @@
 package com.for_comprehension.function.E05;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
+import java.util.StringJoiner;
 import java.util.function.BiConsumer;
 import java.util.function.BinaryOperator;
 import java.util.function.Function;
 import java.util.function.Supplier;
 import java.util.stream.Collector;
+import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-class CustomJoiningCollector {
+class CustomJoiningCollectorForLazyDevelopers {
 
     public static void main(String[] args) {
         System.out.println(Stream.of(1, 2, 3).collect(joiningToString())); // 123
@@ -31,31 +35,36 @@ class CustomJoiningCollector {
     }
 
     record CustomToStringCollector<T>(String delimiter, String prefix, String suffix)
-      implements Collector<T, StringBuilder, String> {
-
+      implements Collector<T, List<String>, String> {
         @Override
-        public Supplier<StringBuilder> supplier() {
-            return StringBuilder::new;
+        public Supplier<List<String>> supplier() {
+            return ArrayList::new;
         }
 
         @Override
-        public BiConsumer<StringBuilder, T> accumulator() {
-            return (sb, t) -> {
-                if (!sb.isEmpty()) {
-                    sb.append(delimiter);
-                }
-                sb.append(t);
+        public BiConsumer<List<String>, T> accumulator() {
+            return (strings, t) -> strings.add(t.toString());
+        }
+
+        @Override
+        public BinaryOperator<List<String>> combiner() {
+            return (strings, strings2) -> {
+                strings.addAll(strings2);
+                return strings;
             };
         }
 
         @Override
-        public BinaryOperator<StringBuilder> combiner() {
-            return StringBuilder::append;
+        public Function<List<String>, String> finisher() {
+            return list -> {
+                var stringJoiner = new StringJoiner(delimiter, prefix, suffix);
+                list.forEach(stringJoiner::add);
+                return stringJoiner.toString();
+            };
         }
 
-        @Override
-        public Function<StringBuilder, String> finisher() {
-            return sb -> prefix + sb.toString() + suffix;
+        public Function<List<String>, String> finisher2() {
+            return list -> list.stream().collect(Collectors.joining(delimiter, prefix, suffix));
         }
 
         @Override
