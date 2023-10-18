@@ -2,6 +2,7 @@ package com.for_comprehension.stream;
 
 import com.for_comprehension.stream.domain.dataset.Store;
 import com.for_comprehension.stream.domain.domain.Customer;
+import com.for_comprehension.stream.domain.domain.Item;
 import com.for_comprehension.stream.domain.domain.ItemEntry;
 import com.for_comprehension.stream.domain.domain.Shop;
 import org.assertj.core.data.Offset;
@@ -14,6 +15,10 @@ import java.util.function.Predicate;
 import java.util.function.ToIntFunction;
 import java.util.stream.Collectors;
 
+import static java.util.function.Predicate.not;
+import static java.util.stream.Collectors.counting;
+import static java.util.stream.Collectors.groupingBy;
+import static java.util.stream.Collectors.toMap;
 import static org.assertj.core.api.Assertions.assertThat;
 
 public class Exercises extends Store {
@@ -181,7 +186,10 @@ public class Exercises extends Store {
     @Test
     public void P12_nameInCsv() {
         // when
-        final String result = todo();
+        final String result = customerList.stream()
+          .map(Customer::getName)
+          .filter(s -> !s.isEmpty())
+          .collect(Collectors.joining(",", "[", "]"));
 
         // then
         assertThat(result).isEqualTo("[Joe,Steven,Patrick,Diana,Alice,Andrew,Martin,Amy,Chris,Kathy]");
@@ -193,7 +201,8 @@ public class Exercises extends Store {
     @Test
     public void P13_ageDistribution() {
         // when
-        final Map<Integer, Long> result = todo();
+        final Map<Integer, Long> result = customerList.stream()
+          .collect(groupingBy(Customer::getAge, counting()));
 
         // then
         assertThat(result)
@@ -208,7 +217,10 @@ public class Exercises extends Store {
     @Test
     public void P14_averageAge() {
         // when
-        final double result = todo();
+        final double result = customerList.stream()
+          .mapToInt(c -> c.getAge())
+          .average()
+          .orElseThrow();
 
         // then
         assertThat(result).isEqualTo(28.7);
@@ -220,10 +232,13 @@ public class Exercises extends Store {
     @Test
     public void P15_howMuchToBuyAllItems() {
         // when
-        long result = todo();
+        long result = shopList.stream()
+          .flatMap(shop -> shop.getItemList().stream())
+          .mapToInt(Item::getPrice)
+          .sum();
 
         // then
-        assertThat(result).isEqualTo(60930L);
+        assertThat(result).isEqualTo(60_930L);
     }
 
     /**
@@ -231,11 +246,17 @@ public class Exercises extends Store {
      */
     @Test
     public void P16_itemsNotOnSale() {
-
         // when
-        final List<String> itemListOnSale = todo();
+        final Set<String> itemListOnSale = shopList.stream()
+          .flatMap(s -> s.getItemList().stream())
+          .map(Item::getName)
+          .collect(Collectors.toSet());
 
-        final Set<String> result = todo();
+        final Set<String> result = customerList.stream()
+          .flatMap(c -> c.getWantToBuy().stream())
+          .map(ItemEntry::getName)
+          .filter(not(itemListOnSale::contains))
+          .collect(Collectors.toSet());
 
         // then
         assertThat(result).hasSize(3);
@@ -249,9 +270,14 @@ public class Exercises extends Store {
     @Test
     public void P17_havingEnoughMoney() {
         // when
-        Map<String, Integer> items = todo();
+        var items = shopList.stream()
+          .flatMap(s -> s.getItemList().stream())
+          .collect(toMap(Item::getName, Item::getPrice, Math::min));
 
-        final List<String> customerNameList = todo();
+        final List<String> customerNameList = customerList.stream()
+          .filter(hasAllAvailableItems(items).and(canAffordAll(items)))
+          .map(Customer::getName)
+          .toList();
 
         // then
         assertThat(customerNameList).hasSize(5);
@@ -259,10 +285,12 @@ public class Exercises extends Store {
     }
 
     private static Predicate<Customer> canAffordAll(Map<String, Integer> items) {
-        return todo();
+        return c -> c.getWantToBuy().stream()
+          .mapToInt(i -> items.get(i.getName()))
+          .sum() <= c.getBudget();
     }
 
     private static Predicate<Customer> hasAllAvailableItems(Map<String, Integer> items) {
-        return todo();
+        return c -> c.getWantToBuy().stream().allMatch(i -> items.containsKey(i.getName()));
     }
 }
